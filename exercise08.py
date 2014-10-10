@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 import random
+import os, sys
 from sys import argv
 from random import choice
+import twitter
 punks = ['.', '?', '!']
 #args = sys.argv
 
@@ -88,8 +90,13 @@ def make_text(chains):
      
     
 def main():
+    if os.environ.get('TWITTER_CONSUMER_SECRET', None) == None:
+        print "Warning!  Twitter keys not set!"
+        print "You should probably run 'source keys.sh'"
+        sys.exit()
 
-    f = open("austen.txt")
+
+    f = open("spears_perry.txt")
     input_text = f.read() # returns one long string -->goes to def make chains... 
 
     #print "%r" %input_text
@@ -98,5 +105,13 @@ def main():
     random_text = make_text(chain_dict)
     print random_text
 
-if __name__ == "__main__":
+    # print "my twitter key is: ", os.environ.get('TWITTER_CONSUMER_SECRET')
+
+    api = twitter.Api(consumer_key = os.environ.get('TWITTER_CONSUMER_KEY'), consumer_secret = os.environ.get('TWITTER_CONSUMER_SECRET'), access_token_key = os.environ.get('TWITTER_ACCESS_TOKEN'),access_token_secret = os.environ.get('TWITTER_ACCESS_SECRET'))
+    status = api.PostUpdate(random_text)
+    print status
+
+    
+
+if __name__== "__main__":
     main()
